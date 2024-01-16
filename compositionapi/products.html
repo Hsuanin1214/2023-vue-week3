@@ -21,7 +21,7 @@
     <div id="app">
         <div class="container">
             <div class="text-end mt-4">
-                <button class="btn btn-primary">
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#productModal">
                     建立新的產品
                 </button>
             </div>
@@ -96,7 +96,8 @@
                                         新增圖片
                                     </button>
                                 </div>
-                                <div v-else>
+                                <!-- <div v-else> -->
+                                <div>
                                     <button class="btn btn-outline-danger btn-sm d-block w-100">
                                         刪除圖片
                                     </button>
@@ -200,7 +201,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.min.js"
         integrity="sha384-j0CNLUeiqtyaRmlzUHCPZ+Gy5fQu0dQ6eZ/xAww941Ai1SxSY+0EQqNXNE6DZiVc"
         crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
     <script src="./products.js" type="module"></script>
 </body>
 
