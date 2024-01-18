@@ -20,49 +20,17 @@ import { createApp } from "vue";
 //       "https://images.unsplash.com/photo-1559656914-a30970c1affd?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTY0fHxkb251dHxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=60",
 //     ],
 //   },
-//   {
-//     category: "蛋糕",
-//     content: "尺寸：6寸",
-//     description:
-//       "蜜蜂蜜蛋糕，夾層夾上酸酸甜甜的檸檬餡，清爽可口的滋味讓人口水直流！",
-//     id: "-McJ-VvcwfN1_Ye_NtVA",
-//     is_enabled: 16,
-//     origin_price: 1000,
-//     price: 900,
-//     title: "蜂蜜檸檬蛋糕",
-//     unit: "個",
-//     num: 1,
-//     imageUrl:
-//       "https://images.unsplash.com/photo-1627834377411-8da5f4f09de8?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1001&q=80",
-//     imagesUrl: [
-//       "https://images.unsplash.com/photo-1618888007540-2bdead974bbb?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=987&q=80",
-//     ],
-//   },
-//   {
-//     category: "蛋糕",
-//     content: "尺寸：6寸",
-//     description: "法式煎薄餅加上濃郁可可醬，呈現經典的美味及口感。",
-//     id: "-McJ-VyqaFlLzUMmpPpm",
-//     is_enabled: 1,
-//     origin_price: 700,
-//     price: 600,
-//     title: "暗黑千層",
-//     unit: "個",
-//     num: 15,
-//     imageUrl:
-//       "https://images.unsplash.com/photo-1505253149613-112d21d9f6a9?ixid=MnwxMjA3fDB8MHxzZWFyY2h8NDZ8fGNha2V8ZW58MHx8MHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=60",
-//     imagesUrl: [
-//       "https://images.unsplash.com/flagged/photo-1557234985-425e10c9d7f1?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTA5fHxjYWtlfGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=60",
-//       "https://images.unsplash.com/photo-1540337706094-da10342c93d8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8NDR8fGNha2V8ZW58MHx8MHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=60",
-//     ],
-//   },
 // ];
+let productModal = null;
+let delProductModal = null;
 
 createApp({
   data() {
     return {
       url: "https://ec-course-api.hexschool.io/v2",
       path: "hsuanin-vue2024",
+      isNew:false,
+      tempProduct:{},
       products: [],
       selectedProduct: [],
       newProduct:{
@@ -95,6 +63,21 @@ createApp({
           window.location = "login.html";
         });
     },
+    openModal(status,item){
+      if(status === 'new'){
+        this.tempProduct = {};
+        this.isNew = true;
+        productModal.show();
+      }else if(status === 'edit'){
+        this.tempProduct = {...item};
+        this.isNew = false;
+        productModal.show();
+      }else if(status === 'delete'){
+        this.tempProduct = {...item};
+        this.isNew = false;
+        // deleteProductModal.show();
+      }
+    },
     getProduct() {
       axios
         .get(`${this.url}/api/${this.path}/admin/products`)
@@ -107,13 +90,6 @@ createApp({
           console.log(error);
         });
     },
-    showProductDetail(product){
-      this.selectedProduct = product || null;
-      if (!product) {
-        console.log(`Product with ID ${productId} not found.`);
-        // 可以在這裡處理產品不存在的情況，比如顯示錯誤訊息
-      }
-    }
   },
   mounted() {
     const token = document.cookie.replace(
@@ -123,5 +99,9 @@ createApp({
     // console.log(token);
     axios.defaults.headers.common["Authorization"] = token;
     this.checkLogin();
+    productModal = new bootstrap.Modal(document.getElementById("productModal"),{
+      keyboard : false,
+      backdrop:'static'
+    })
   },
 }).mount("#app");
