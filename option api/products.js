@@ -1,28 +1,7 @@
 import { createApp } from "vue";
-// 產品資料格式
-// const products = [
-//   {
-//     category: "甜甜圈",
-//     content: "尺寸：14x14cm",
-//     description:
-//       "濃郁的草莓風味，中心填入滑順不膩口的卡士達內餡，帶來滿滿幸福感！",
-//     id: "-L9tH8jxVb2Ka_DYPwng",
-//     is_enabled: 1,
-//     origin_price: 150,
-//     price: 99,
-//     title: "草莓莓果夾心圈",
-//     unit: "個",
-//     num: 10,
-//     imageUrl:
-//       "https://images.unsplash.com/photo-1583182332473-b31ba08929c8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8NzR8fGRvbnV0fGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=60",
-//     imagesUrl: [
-//       "https://images.unsplash.com/photo-1626094309830-abbb0c99da4a?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2832&q=80",
-//       "https://images.unsplash.com/photo-1559656914-a30970c1affd?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTY0fHxkb251dHxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=60",
-//     ],
-//   },
-// ];
+
 let productModal = null;
-let delProductModal = null;
+let deleteProductModal = null;
 
 createApp({
   data() {
@@ -30,19 +9,9 @@ createApp({
       url: "https://ec-course-api.hexschool.io/v2",
       path: "hsuanin-vue2024",
       isNew:false,
-      tempProduct:{},
-      products: [],
-      selectedProduct: [],
-      newProduct:{
-        title : '',
-        category : '',
-        unit : '',
-        origin_price : '',
-        price : '',
-        description : '',
-        content : '',
-        is_enabled : true,
-        imageUrl:''
+      products:[],
+      tempProduct:{
+        imagesUrl:[],
       }
     };
   },
@@ -64,8 +33,11 @@ createApp({
         });
     },
     openModal(status,item){
+      console.log(item);
       if(status === 'new'){
-        this.tempProduct = {};
+        this.tempProduct = {
+          imagesUrl:[],
+        };
         this.isNew = true;
         productModal.show();
       }else if(status === 'edit'){
@@ -75,7 +47,7 @@ createApp({
       }else if(status === 'delete'){
         this.tempProduct = {...item};
         this.isNew = false;
-        // deleteProductModal.show();
+        deleteProductModal.show();
       }
     },
     getProduct() {
@@ -90,6 +62,39 @@ createApp({
           console.log(error);
         });
     },
+    updateProduct(){
+      let updateOrNewUrl = `${this.url}/api/${this.path}/admin/product/${this.tempProduct.id}`;
+      let http = 'put';
+      if(this.isNew){
+        updateOrNewUrl = `${this.url}/api/${this.path}/admin/product`;
+        http = 'post';
+      }
+      axios[http](updateOrNewUrl,{data:this.tempProduct})
+      .then((res)=>{
+        alert(res.data.message);
+        productModal.hide();
+        this.getProduct();//取得所有產品
+      })
+      .catch((error)=>{
+        alert(error.response.data.message);
+      })
+    },
+    delProduct(){
+      const deleteUrl = `${this.url}/api/${this.path}/admin/product/${this.tempProduct.id}`;
+      axios.delete(deleteUrl)
+      .then((res)=>{
+        alert(res.data.message);
+        deleteProductModal.hide();
+        this.getProduct();//更新所有產品
+      })
+      .catch((error)=>{
+        alert(error.response.data.message);
+      })
+    },
+    createImages(){
+      this.tempProduct.imagesUrl = [];
+      this.tempProduct.imagesUrl.push('');
+    }
   },
   mounted() {
     const token = document.cookie.replace(
@@ -100,6 +105,10 @@ createApp({
     axios.defaults.headers.common["Authorization"] = token;
     this.checkLogin();
     productModal = new bootstrap.Modal(document.getElementById("productModal"),{
+      keyboard : false,
+      backdrop:'static'
+    })
+    deleteProductModal = new bootstrap.Modal(document.getElementById("delProductModal"),{
       keyboard : false,
       backdrop:'static'
     })
