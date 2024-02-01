@@ -52,6 +52,9 @@ const app = createAppVue({
         productModal.show();
       }else if(status === 'edit'){
         tempProduct.value = {...product};
+        if(!Array.isArray(tempProduct.value.imagesUrl)){
+          tempProduct.value.imagesUrl = [];
+        }
         isNew.value = false;
         productModal.show();
       }else if(status === 'delete'){
