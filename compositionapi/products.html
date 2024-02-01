@@ -101,11 +101,9 @@
                                 <!-- 檢查是否為陣列，代表是否有多張圖 -->
                                 <div v-if="Array.isArray(tempProduct.imagesUrl)">
                                     <!-- 遍歷照片 -->
-                                    <div class="mb-1" v-for="(image,key) in tempProduct.imagesUrl" :key="key">
+                                    <div class="mb-1" v-for="(image,key) in tempProduct.imagesUrl" :key="key + 123">
                                         <div class="mb-3">
-                                            <label :for="`imagesUrl${key}`" class="form-label"></label>
                                             <input type="text" 
-                                            id="`imagesUrl${key}`" 
                                             v-model="tempProduct.imagesUrl[key]" 
                                             class="form-control"
                                             placeholder="請輸入圖片連結">
@@ -114,25 +112,17 @@
                                     </div>
                                 </div>
                                 <!-- 如果沒有照片或照片只有一張 -->
-                                <div v-if="!tempProduct.imagesUrl.length || tempProduct.imagesUrl[tempProduct.imagesUrl.length - 1]">
                                     <button class="btn btn-outline-primary btn-sm d-block w-100"
+                                    v-if="tempProduct.imagesUrl.length === 0 || tempProduct.imagesUrl[tempProduct.imagesUrl.length - 1]"
                                     @click="tempProduct.imagesUrl.push('')">
                                         新增圖片
                                     </button>
-                                </div>
-                                <!-- <div v-else> ???沒有出現-->
-                                <div v-else>
+                                <!-- <v-else> -->
                                     <button class="btn btn-outline-danger btn-sm d-block w-100"
+                                    v-else
                                     @click="tempProduct.imagesUrl.pop()">
                                         刪除圖片
                                     </button>
-                                </div>
-                                <div v-else>
-                                    <button class="btn btn-outline-danger btn-sm d-block w-100"
-                                    @click="createImages">
-                                        新增圖片
-                                    </button>
-                                </div>
                             </div>
                             <div class="col-sm-8">
                                 <div class="mb-3">
